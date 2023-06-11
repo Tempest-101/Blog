@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>调度算法 | 守财奴囤小宇</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://Tempest-101.github.io/favicon.ico?v=1686494328830">
+<link rel="stylesheet" href="https://Tempest-101.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="操作系统有三大调度机制，分别为进程调度、页面置换、磁盘调度。
+进程调度算法
+进程是由CPU调度的，CPU会根据一些规则将CPU资源分配给某进程，这个规则就是进程调度算法。
+进程调度分为抢占式与非抢占式。在抢占式调度中，正在运行的进程可以被中..." />
+    <meta name="keywords" content="操作系统" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://Tempest-101.github.io">
+        <img src="https://Tempest-101.github.io/images/avatar.png?v=1686494328830" class="site-logo">
+        <h1 class="site-title">守财奴囤小宇</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Time
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://Tempest-101.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">调度算法</h2>
+            <div class="post-date">2023-03-11</div>
+            
+            <div class="post-content" v-pre>
+              <p>操作系统有三大调度机制，分别为进程调度、页面置换、磁盘调度。</p>
+<h2 id="进程调度算法">进程调度算法</h2>
+<p>进程是由CPU调度的，CPU会根据一些规则将CPU资源分配给某进程，这个规则就是进程调度算法。<br>
+进程调度分为抢占式与非抢占式。在抢占式调度中，正在运行的进程可以被中断替换另一进程，非抢占式则不能。</p>
+<p>下面将介绍几种常用的进程调度算法</p>
+<h3 id="先来先服务算法fcfs">先来先服务算法(FCFS)</h3>
+<p>顾名思义，FCFS每次会从就绪队列中选择最早进入队列的进程运行，在该进程退出或被阻塞后才会继续从队列中选择第一个进程运行。</p>
+<p>可以理解为最传统的排队。以银行办理业务为例，每个客户都是一个进程，需要处理一些业务，服务窗口就是CPU资源。客户需要到服务窗口才能处理业务，如果一次有很多客户的话就需要排队，这个队列就是就绪队列。这里排队的顺序自然是按时间顺序来的，服务窗口按队列为先排队的客户服务，这就是FCFS。</p>
+<p>FCFS的缺陷是，如果队列首部有一个很长的作业，那么长作业后面那些短作业就需要等很长时间了。</p>
+<h3 id="短作业优先算法sjf">短作业优先算法(SJF)</h3>
+<p>SJF会从就绪队列中选取运行时间最短的进程来运行。</p>
+<p>依旧是银行的例子，这里排队的顺序就不是按先来后到了，而是处理业务所需时间最短的人排在前面，而业务比较复杂，需要花大量时间解决的客户则排在后面。</p>
+<p>SJF的缺陷是，对于一个长作业，如果一直有短作业加入就绪队列，有可能长作业很长时间不会运行。</p>
+<h3 id="高响应比优先算法hrrn">高响应比优先算法(HRRN)</h3>
+<p>FCFS与SJF都无法权衡长作业与短作业，HRRN解决了该权衡问题。</p>
+<p>HRRN在调度时会为就绪队列的进程计算响应比优先级，将响应比优先级最高的进程投入运行。</p>
+<p>响应比优先级=(进程已等待时间+所需运行时间)/所需运行时间</p>
+<h3 id="时间片轮转算法rr">时间片轮转算法(RR)</h3>
+<p>RR是使用的最广泛的调度算法。每个进程被分配一个时间段，称为时间片（Quantum），即允许该进程在该时间段中运行。</p>
+<p>当运行中进程的时间片用完后，该进程被阻塞，将资源给下一个时间片的进程。<br>
+如果运行中进程的时间片未用完，但该进程已结束或被阻塞，则立刻让出资源。</p>
+<p>使用RR需要关注时间片的长度，如果时间片设得太短会导致过多的进程上下文切换，降低了 CPU 效率；如果设得太长又可能引起对短作业进程的响应时间变长。</p>
+<h3 id="最高优先级算法hpf">最高优先级算法(HPF)</h3>
+<p>使用HPF时，每个进程都有一个优先级，在进程调度时，会选取优先级最高的那个进程运行。</p>
+<p>优先级可以是静态的，即一开始为进程分配，之后除非人为改变，否则就不变了。也可以是动态的，比如随着进程等待时间的增加，优先级也跟着增加。</p>
+<p>HPF也可以是抢占式或非抢占式的。这取决于是否允许中断当前运行的进程。</p>
+<h2 id="页面置换算法">页面置换算法</h2>
+<p>在了解内存页面置换算法前，我们得先谈一下缺页中断。</p>
+<p>当 CPU 访问的页面不在物理内存时，便会产生一个缺页中断，请求操作系统将所缺页调入到物理内存。那它与一般中断的主要区别在于：</p>
+<p>缺页中断在指令执行「期间」产生和处理中断信号，而一般中断在一条指令执行「完成」后检查和处理中断信号。<br>
+缺页中断返回到该指令的开始重新执行「该指令」，而一般中断返回回到该指令的「下一个指令」执行。</p>
+<p>当出现缺页中断，需要调入新页面，但此时内存已满，就需要选择一个物理页面进行置换。页面置换算法的目标就是减少页面置换的次数。</p>
+<h3 id="最佳页面置换算法">最佳页面置换算法</h3>
+<p>最佳页面置换算法会选择当前内存中未来最长时间不被访问的页面进行置换。这是一种理想算法，因为我们并不能预知未来。</p>
+<h3 id="先进先出置换算法">先进先出置换算法</h3>
+<p>先进先出算法会选择内存中驻留时间最长的页面进行置换。注意，访问同一个页面不能刷新它的驻留时间。</p>
+<h3 id="最近最久为使用置换算法">最近最久为使用置换算法</h3>
+<p>该算法选择内存中最长时间没有被访问的页面进行置换。</p>
+<p>虽然该算法性能不错，但是需要在内存中维护一个所有页面的链表，代价很高，所以实际应用中使用较少。</p>
+<h3 id="时钟页面置换算法">时钟页面置换算法</h3>
+<p>该算法维护一个循环队列，一个指向队列节点的指针。队列内容是当前内存中的页面，队列首尾相连。在每个节点设置一个访问位，访问位在页面置换进内存时或该页面被访问时置1。</p>
+<p>发生缺页时，检查指针指向的节点访问位是否为0，是的话置换该页，并将指针指向后一个节点。如果不是0的话，则将该节点访问位置0，向后遍历重复操作，直到遍历到访问位为0的节点。</p>
+<h2 id="磁盘调度算法">磁盘调度算法</h2>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://Tempest-101.github.io/tag/VP3e7ysa2/" class="tag">
+                    操作系统
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://Tempest-101.github.io/post/cong-shu-ru-wang-zhi-hou-du-fa-sheng-liao-xie-sha/">
+                  <h3 class="post-title">
+                    从输入网址后都发生了些啥？
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

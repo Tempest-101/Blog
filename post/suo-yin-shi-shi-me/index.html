@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>索引是什么？ | 守财奴囤小宇</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://Tempest-101.github.io/favicon.ico?v=1686494328830">
+<link rel="stylesheet" href="https://Tempest-101.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="什么是索引？
+索引可以认为是为了提高数据库查找性能而维护的一个数据结构。
+数据库的查找操作，无非就是根据一张表的若干个字段去查询对应的数据行。在最原始的数据库中，如果要进行一次查询，那么只能从表的第一行开始挨个遍历到最后一行，在遍历过程中比..." />
+    <meta name="keywords" content="MySQL" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://Tempest-101.github.io">
+        <img src="https://Tempest-101.github.io/images/avatar.png?v=1686494328830" class="site-logo">
+        <h1 class="site-title">守财奴囤小宇</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Time
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://Tempest-101.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">索引是什么？</h2>
+            <div class="post-date">2023-04-05</div>
+            
+            <div class="post-content" v-pre>
+              <h4 id="什么是索引">什么是索引？</h4>
+<p>索引可以认为是为了提高数据库查找性能而维护的一个数据结构。</p>
+<p>数据库的查找操作，无非就是根据一张表的若干个字段去查询对应的数据行。在最原始的数据库中，如果要进行一次查询，那么只能从表的第一行开始挨个遍历到最后一行，在遍历过程中比较当前数据行是否满足查询条件，若满足则加入结果集。这样每次查询都要遍历整个表，效率极差。</p>
+<p>由于查询过程中要比较的只是表中的若干个字段，也就是说查询过程中对于定位操作起作用的只有那几个字段，那么我们将这些字段下的数据生成副本，用搜索性能好的数据结构进行存储，同时对每个数据节点附加一个可以获取该数据所在数据行信息的能力。这个能力可以是指针，也就是非聚簇索引；也可以是直接把数据行保存在这个数据节点中，也就是聚簇索引。这样查询操作只需要根据查询条件访问这个搜索性能好的数据结构实例，获取数据节点，然后由该数据节点获取对应数据行信息即可。</p>
+<p>这里的数据结构实例就是索引。</p>
+<h4 id="mysql索引的底层实现为什么mysql索引要用b树实现而不是b树-红黑树-map-list">MySQL索引的底层实现(为什么MySQL索引要用B+树实现，而不是B树、红黑树、Map、List)</h4>
+<p>索引数据结构的选择并非完全是由该数据结构的搜索效率决定的，因为MySQL数据库对数据的访问一般要经过磁盘IO，而磁盘IO的性能要远远劣于内存操作。除此之外还有其他因素。因此索引结构的选择并没有那么简单。</p>
+<p>InnoDB采用B+树实现索引。直接讲用B+树实现的好处并不直观，我们先看下其他数据结构相比B+树的问题。</p>
+<h5 id="红黑树">红黑树</h5>
+<p>红黑树的搜索、维护性能都是很好的，单从这方面考虑红黑树其实比B+树优秀，因为B+树维护开销大。但是红黑树结构每一次对子节点的访问都是一次磁盘IO操作，也就是说磁盘IO的次数与红黑树访问深度直接挂钩，而红黑树是一种二叉树，高度很高，一次查询很可能伴随着非常多次的磁盘IO，所以综合考虑下红黑树是不适合作InnoDB的索引的。</p>
+<h5 id="hashmap">HashMap</h5>
+<p>和红黑树一样，磁盘IO的考虑。但Memory数据库是内存数据库，用到了该结构。</p>
+<h5 id="list">List</h5>
+<p>内存空间是有限的，如果数据少那List是很优秀的，但是当数据多起来，List将无法一次性读入内存。那就与不加索引一样了。</p>
+<h5 id="b树">B树</h5>
+<p>B树是MyISAM数据库索引的实现方式，采用非聚簇索引的方式存储数据，多路搜索树的结构使其很好的平衡了搜索性能与磁盘IO次数，是一种很不错的索引存储结构。但在一些方面上还是不如B+树。</p>
+<h5 id="b树-2">B+树</h5>
+<p>B+树与B树的不同在于B+树非叶子节点只存储key，而叶子节点除了key还存储了数据行，采用的是聚簇索引，且叶子节点有双向链表。非叶子节点只存key，所以一个磁盘页可以存放更多的节点，因此B+树的高度比B树更低，最差磁盘IO次数比B树要少。由于是聚簇索引，叶子节点直接存储了数据行，所以当数据行位置发生改变时并不需要再维护索引。双向链表使索引的范围查询也同样高效。</p>
+<p>主键索引的叶子节点存储数据行，其他索引则存储的是主键值。调用其他索引时是先查询到这个索引对应的主键，再通过主键查询数据行。这一返回主键的操作叫回表。InnoDB有一个小优化，当在一段时间内有一个辅助索引经常被访问时，InnoDB会在内存创建一个Hash表描述这个辅助索引以提升回表性能。</p>
+<p>B+树也是有缺陷的，它的维护成本较高。增删数据可能会导致B+树的分裂与聚合，这是很耗时的。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://Tempest-101.github.io/tag/ZnLriFl9Q/" class="tag">
+                    MySQL
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://Tempest-101.github.io/post/java-xian-cheng-de-sheng-ming-zhou-qi-zhuang-tai-zhuan-huan/">
+                  <h3 class="post-title">
+                    Java线程的生命周期(状态转换)
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

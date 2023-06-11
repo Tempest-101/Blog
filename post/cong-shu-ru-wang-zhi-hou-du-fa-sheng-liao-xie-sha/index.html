@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>从输入网址后都发生了些啥？ | 守财奴囤小宇</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://Tempest-101.github.io/favicon.ico?v=1686494328830">
+<link rel="stylesheet" href="https://Tempest-101.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="解析URL
+在键入网址后，浏览器会解析URL，根据URL生成请求信息。
+例如https://www.google.com/search，浏览器会解析出用的是https协议，服务器域名是www.google.com，访问的是服务器下searc..." />
+    <meta name="keywords" content="计算机网络" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://Tempest-101.github.io">
+        <img src="https://Tempest-101.github.io/images/avatar.png?v=1686494328830" class="site-logo">
+        <h1 class="site-title">守财奴囤小宇</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Time
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://Tempest-101.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">从输入网址后都发生了些啥？</h2>
+            <div class="post-date">2023-03-10</div>
+            
+            <div class="post-content" v-pre>
+              <h3 id="解析url">解析URL</h3>
+<p>在键入网址后，浏览器会解析URL，根据URL生成请求信息。</p>
+<p>例如https://www.google.com/search，浏览器会解析出用的是https协议，服务器域名是www.google.com，访问的是服务器下search映射的资源。如果没有资源路径的话，则代表访问根目录下实现设置的默认文件，如/index.html。</p>
+<p>对URL解析后，浏览器就知道需要访问的服务器域名与资源路径，就可以根据这些信息生成请求了。</p>
+<h3 id="dns">DNS</h3>
+<p>现在知道了域名和访问路径，但是不知道服务器IP地址在哪，这就相当于寄快递只有包裹和收件人姓名，但是不知道收件地址。这里就需要DNS(域名解析系统)的帮助了。</p>
+<p>DNS的作用是实现域名到IP地址的映射，简单来说就是给DNS一个域名，然后DNS会返回这个域名对应的IP地址。那么DNS是怎么运作的呢？先了解一下域名吧。</p>
+<h4 id="域名">域名</h4>
+<p>域名用句点分隔，是不同层次的界限。越靠右的层级越高。可以把域名看作顺序相反的城市地址，即XX区.XX市.XX省。事实上，域名最后还有一个句点，如www.google.com.，这个最后的句点代表着根域名。很容易就发现域名的层级关系是树状结构的，根域指向各个顶级域(com,cn,edu等)，顶级域名再指向低一级的域(google,baidu等)，以此类推。所以通过任意一台DNS服务器，都可以通过它找到根服务器，然后顺藤摸瓜找到下层的任意一台DNS服务器。</p>
+<h4 id="域名解析流程">域名解析流程</h4>
+<ul>
+<li>
+<p>在获取域名后，操作系统会先检索浏览器缓存与本地hosts文件是否有这个网址记录，有的话就取用，没有的话再查找本机DNS解析器缓存，若仍没有数据则向TCP/IP设置中的DNS服务器发送请求。</p>
+</li>
+<li>
+<p>本地DNS服务器一般由运营商提供。本地DNS服务器收到请求后，检索自己的缓存，检索本地配置区域资源，若都没有匹配记录的话，则本地DNS服务器向根DNS服务器发送请求。之后为迭代请求。</p>
+</li>
+<li>
+<p>根服务器若有缓存数据，则返回缓存数据，否则返回下一级服务器地址，让本地DNS服务器访问下一级服务器，以此类推。</p>
+</li>
+<li>
+<p>若匹配到数据，则将域名对应的IP地址发送回本地DNS服务器，本地DNS服务器再返回给浏览器。<br>
+到此，浏览器就获得了服务器地址。</p>
+</li>
+</ul>
+<h3 id="组装报文">组装报文</h3>
+<p>如果直接将数据发到服务器的话，服务器无法得知这个数据的信息，比如长度为多少？用的协议是什么？等等。那么服务器就无法顺利解析这条数据。为了能让服务器顺利获取这个数据包的信息，需要给数据加上几个头部，用来标识这条数据包的相关附加信息。这样服务器收到后就可以根据这些头部拆分识别这条数据了。</p>
+<p>这里需要了解协议栈。协议栈可以看作一个自上而下的工厂，应用程序(浏览器，服务器)收集到IP与数据后就将剩下的工作委托给协议栈，协议栈内部根据不同功能各司其职，为从上层获取到的数据包切分数据，添加包头，组装报文，然后向下传输。<br>
+这里协议栈还需要提一嘴ARP与ICMP，ARP的作用是实现IP地址到MAC地址的映射，即给予IP地址，返回MAC地址。ICMP的作用是告知网络包传送过程中产生的错误以及各种控制信息。</p>
+<p>在协议栈处理好报文后，就会交由网卡，将数字信号转化为电信号，这样才能传输。网卡由网卡驱动控制，网卡驱动获取网络包之后，会将其复制到网卡内的缓存区中，接着会在其开头加上报头和起始帧分界符，在末尾加上用于检测错误的帧校验序列。</p>
+<p>发送端的运作就到此为止了，接下来就是数据包经过交换机、路由器到达目标端。</p>
+<h3 id="服务器接收">服务器接收</h3>
+<p>服务器接收到这个包后，服务器网卡会先将其转回数字信息，然后再由服务器一系列程序进行包的拆解、验证。其实就类似于拆快递，这一过程要验证快递上填写的身份信息，然后将快递层层拆开，才能得到里面的东西。</p>
+<h3 id="返回响应">返回响应</h3>
+<p>服务器得到数据包内部数据后，会将该数据交给指定的应用程序，应用程序根据所得包进行一系列处理后，生成响应信息，返回给浏览器。</p>
+<h3 id="三次握手-四次挥手">三次握手、四次挥手</h3>
+<p>TCP是面向连接的传输协议，使用TCP的话，在传输数据前要先进行三次握手建立可靠连接，再结束数据传输后也要进行四次挥手断开连接，具体会在另一篇中讲。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://Tempest-101.github.io/tag/Ali0OX3kl/" class="tag">
+                    计算机网络
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://Tempest-101.github.io/post/wei-shi-me-mac-di-zhi-yu-ip-di-zhi-que-yi-bu-ke/">
+                  <h3 class="post-title">
+                    为什么MAC地址与IP地址缺一不可
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

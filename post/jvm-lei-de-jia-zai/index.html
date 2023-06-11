@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>JVM Class文件加载过程 | 守财奴囤小宇</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://Tempest-101.github.io/favicon.ico?v=1686494328830">
+<link rel="stylesheet" href="https://Tempest-101.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="在前不久有人提出了一个问题：.class文件加载到JVM中具体是怎样的一个过程？相信大家都很清楚加载、验证、准备、解析、初始化这几个步骤，但同学疑惑的是最初的那个加载过程，即JVM将.class文件读入。
+加载过程
+.class文件是二进制..." />
+    <meta name="keywords" content="JVM" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://Tempest-101.github.io">
+        <img src="https://Tempest-101.github.io/images/avatar.png?v=1686494328830" class="site-logo">
+        <h1 class="site-title">守财奴囤小宇</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Time
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://Tempest-101.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">JVM Class文件加载过程</h2>
+            <div class="post-date">2023-03-31</div>
+            
+            <div class="post-content" v-pre>
+              <p>在前不久有人提出了一个问题：.class文件加载到JVM中具体是怎样的一个过程？相信大家都很清楚加载、验证、准备、解析、初始化这几个步骤，但同学疑惑的是最初的那个加载过程，即JVM将.class文件读入。</p>
+<h3 id="加载过程">加载过程</h3>
+<p>.class文件是二进制字节码文件，它记录了类的结构与数据以及相关信息。JVM会根据它自有的规则解析.class文件，根据.class文件生成instanceKlass对象存放在方法区。instanceKlass存储的是.class文件对应类的元信息，可以理解为描述这个类的信息。JVM底层是由C++实现的，Klass是java类在C++中的表现形式。</p>
+<p>同时JVM还会生成一个instanceKlass的镜像对象instanceMirrorKlass存放在堆中，这个镜像对象其实就是用来表示java.lang.Class、是我们通过反射机制获取到的Class对象。也就是说，InstanceMirrorKlass是暴露给外部程序的，而InstanceKlass则是JVM内部专用的。</p>
+<h3 id="注意点">注意点</h3>
+<p>在方法区那块有人会疑惑方法区与永久代、元空间的关系。需要注意的是，方法区是JVM设计的一个标准，相当于程序中的接口；而永久代也好、元空间也好，都只是方法区的一种实现。</p>
+<p>方法区之于永久代、元空间就相当于接口之于实现类。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://Tempest-101.github.io/tag/SL7VZwKQR/" class="tag">
+                    JVM
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://Tempest-101.github.io/post/jvm-dui-nei-cun-la-ji-hui-shou-ce-lue/">
+                  <h3 class="post-title">
+                    JVM内存区域划分
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

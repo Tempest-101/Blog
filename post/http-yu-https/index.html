@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>HTTP与HTTPS | 守财奴囤小宇</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://Tempest-101.github.io/favicon.ico?v=1686494328830">
+<link rel="stylesheet" href="https://Tempest-101.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="HTTP
+HTTP是什么
+HTTP(超文本传输协议)是一种用于通过网络传输数据的协议。HTTP通过响应和请求完成通信。
+请求与响应
+简单的来说，请求与响应就是遵循HTTP协议的一系列文本。在用户与浏览器交互时，浏览器会根据用户操作生成HTT..." />
+    <meta name="keywords" content="计算机网络" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://Tempest-101.github.io">
+        <img src="https://Tempest-101.github.io/images/avatar.png?v=1686494328830" class="site-logo">
+        <h1 class="site-title">守财奴囤小宇</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Time
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://Tempest-101.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">HTTP与HTTPS</h2>
+            <div class="post-date">2023-03-06</div>
+            
+            <div class="post-content" v-pre>
+              <h2 id="http">HTTP</h2>
+<h3 id="http是什么">HTTP是什么</h3>
+<p>HTTP(超文本传输协议)是一种用于通过网络传输数据的协议。HTTP通过响应和请求完成通信。</p>
+<h3 id="请求与响应">请求与响应</h3>
+<p>简单的来说，请求与响应就是遵循HTTP协议的一系列文本。在用户与浏览器交互时，浏览器会根据用户操作生成HTTP请求报文传送到源站服务器或代理缓存服务器；服务器收到请求后会生成HTTP响应。响应就是对HTTP请求的回答。</p>
+<h4 id="请求">请求</h4>
+<p>这是一个请求的示例。</p>
+<pre><code>GET /hello.txt HTTP/1.1
+User-Agent: curl/7.63.0 libcurl/7.63.0 OpenSSL/1.1.l zlib/1.2.11
+Host: www.example.com
+Accept-Language: en
+
+userId=9&amp;pageId=3
+</code></pre>
+<p>一个请求可以拆为三个部分<br>
+<strong>请求行</strong><br>
+示例中第一行被称为请求行。所有请求的第一行都是请求行，请求行由请求方法、URI、HTTP版本三个元素组成，元素之间由空格隔开。通过请求行，我们能大致了解这个请求的内容。</p>
+<p><strong>消息头</strong><br>
+示例中二到四行的信息被称为消息头。消息头由若干键值对组成，用于表示请求的附加内容，如字符集编码、主机地址等。</p>
+<p><strong>消息体</strong><br>
+示例中第六行被称为消息体。注意第六行与第四行之间有一空行，在请求中，消息头与消息体通过空行来分隔开，空行下方的信息都被称为消息体。消息体包含了客户端向服务器发送的消息，如附带参数，POST表单。</p>
+<p><strong>请求方法</strong></p>
+<ul>
+<li>GET:用于请求获取资源</li>
+<li>POST:用于传输实体主体</li>
+<li>PUT:用于传输文件</li>
+<li>HEAD:用于获取报文首部，一般用于确认URI的有效性与资源更新的日期时间。</li>
+<li>DELETE:删除文件。</li>
+<li>OPTIONS:询问服务器支持哪些方法。</li>
+</ul>
+<h4 id="响应">响应</h4>
+<p>这是一个响应的示例。</p>
+<pre><code>HTTP/1.1 200 OK
+Date: Wed, 30 Jan 2019 12:14:39 GMT
+Server: Apache
+Last-Modified: Mon, 28 Jan 2019 11:17:01 GMT
+Accept-Ranges: bytes
+Content-Length: 12
+Vary: Accept-Encoding
+Content-Type: text/plain
+
+Hello World!
+</code></pre>
+<p><strong>状态行</strong><br>
+示例第一行被称为状态行。所有响应的第一行都被称为状态行，状态行由HTTP版本、状态码、状态短语组成。状态短语是用来解释状态码的短语。</p>
+<p><strong>消息头</strong><br>
+与请求一样，响应也有消息头与消息体，且也使用空行分隔开。示例中第二到七行是消息头，与请求的消息头没什么区别。</p>
+<p><strong>消息体</strong><br>
+示例最后一行为消息体。消息体是服务器向客户端发送的数据，可以是一串普通字符串，也可以是一个页面等。消息体的内容作为二进制来处理。</p>
+<p><strong>常见状态码</strong><br>
+1XX—表示目前是协议的中间状态，还需要后续请求</p>
+<ul>
+<li>101:切换请求协议</li>
+</ul>
+<p>2XX—表示请求成功</p>
+<ul>
+<li>200:请求成功，有响应体</li>
+</ul>
+<p>3XX—表示重定向状态，需要重新请求</p>
+<ul>
+<li>301:永久重定向，会缓存</li>
+<li>302:临时重定向，不会缓存</li>
+<li>304:协商缓存命中</li>
+</ul>
+<p>4XX—表示请求报文错误</p>
+<ul>
+<li>403:服务器禁止访问</li>
+<li>404:未找到资源</li>
+<li>400:请求错误</li>
+</ul>
+<p>5XX—表示服务器错误</p>
+<ul>
+<li>500:服务端错误</li>
+<li>503:服务器繁忙</li>
+</ul>
+<h3 id="长连接-短连接">长连接、短连接</h3>
+<h4 id="什么是长连接与短连接">什么是长连接与短连接</h4>
+<p>HTTP长连接短连接本质上是TCP长连接短连接。</p>
+<p>短连接就是客户端和服务器每进行一次HTTP操作就建立一次连接，任务完成就立刻中断。表现形式为访问的页面中如果有其他Web资源(js，图像，css)的话，每遇到一个这样的Web资源浏览器就会重新建立一个HTTP会话。</p>
+<p>而长连接在一个网页打开后不会立刻关闭用于传输HTTP数据的TCP连接，客户端再次访问这个服务器时会继续用这个已经建立的连接。但它并不是永久保持连接的，它有一个保持时间，可以在服务器软件中设置。<br>
+开启长连接时会在响应头加上</p>
+<pre><code>Connection:keep-alive
+</code></pre>
+<p>HTTP1.0默认为短连接，HTTP1.1改为默认长连接。</p>
+<h4 id="长连接与短连接的优劣">长连接与短连接的优劣</h4>
+<p>长连接可以省去许多TCP连接/关闭操作，减少浪费节约时间，适用于频繁发送请求的客户端。但连接长时间不关闭的话，随着用户的不断增多，会出现服务器撑不住的情况。</p>
+<p>短连接对于服务器来说管理起来简单，但遇到频繁请求的客户端会在TCP连接的建立与关闭上耗费许多时间，适用于有很多客户端的情况。</p>
+<h2 id="https">HTTPS</h2>
+<h3 id="https是什么">HTTPS是什么</h3>
+<p>HTTPS是支持加密与验证的HTTP。HTTPS诞生的原因是HTTP采用明文传输，安全性太低，因此HTTPS在HTTP的基础上使用了TLS(SSL)来加密请求与响应，并对这些请求与响应进行数字签名，提高传输的安全性。使用HTTP的网站URL由http://开头，用HTTPS的网站URL则由https://开头。</p>
+<h3 id="https报文是什么样的">HTTPS报文是什么样的</h3>
+<p>HTTPS报文对于通信双方解密后与HTTP报文并无区别，但对于攻击者，在传输过程中截取后由于没有解密手段，攻击者看到的是一串无法解读的字符串，类似于</p>
+<pre><code>t8Fw6T8UV81pQfyhDkhebbz7+oiwldr1j2gHBB3L3RFTRsQCpaSnSBZ78Vme+DpDVJPvZdZUZHpzbbcqmSW1+3xXGsERHg9YDmpYk0VVDiRvw1H5miNieJeJ/FNUjgH0BmVRWII6+T4MnDwmCMZUI/orxP3HGwYCSIvyzS3MpmmSe4iaWKCOHQ==
+</code></pre>
+<h3 id="https如何保证安全性">HTTPS如何保证安全性</h3>
+<p>HTTPS采用对称加密、非对称加密、数字证书结合的方式保证传输安全性。</p>
+<h4 id="对称加密">对称加密</h4>
+<p>对称加密采用单密钥策略，一把密钥加密的数据只有这把密钥本身才能解密。如果只采用对称加密，客户端与服务器的通信如下图所示<br>
+<img src="https://Tempest-101.github.io/post-images/1678099538130.png" alt="" loading="lazy"><br>
+但这种方式下，难免会出现通信双方一方持有密钥而另一方没有的情况，这就需要有密钥的那一方通过网络传输过去。而HTTP是明文传输，攻击者可以截获这个密钥，那么加密就失效了。</p>
+<h4 id="非对称加密">非对称加密</h4>
+<p>非对称加密有两把密钥，一把称为公钥，允许暴露；一把称为私钥，存在持有者本地，一般不允许暴露给任何人。通过公钥加密的数据只有对应的私钥才可以解密。如果只采用非对称加密，客户端与服务器的通信如下图所示<br>
+<img src="https://Tempest-101.github.io/post-images/1678100312341.png" alt="" loading="lazy"><br>
+非对称加密的性能是比较差的，如果只采用非对称加密的话，用非对称加密对整个请求响应加密是效率很差的。因此往往都会结合对称加密。即用对称加密对报文加密，再用非对称加密对对称加密的密钥进行加密。这里加密报文所用的对称加密密钥称为会话密钥。</p>
+<p>这样虽然解决了只采用对称加密那一方案的问题，但是其实这种方案也是有风险的。</p>
+<p>如果在客户端与服务器之间有一个攻击者，我们称其为中间人，中间人持有一对密钥，中间人拦截一端的请求，然后伪装成那一端的身份用自己的密钥替换原报文包含的密钥继续完成通信，就会使会话密钥暴露。<br>
+<img src="https://Tempest-101.github.io/post-images/1678100738698.png" alt="" loading="lazy"><br>
+究其原因是服务器无法识别收到的请求是否来自对应客户端，而为了验证身份HTTPS加入了数字证书。</p>
+<h4 id="数字证书">数字证书</h4>
+<p>数字证书由服务器信息、数字签名组成，数字签名由信息摘要加密而来。</p>
+<h3 id="数字签名-信息摘要">数字签名、信息摘要</h3>
+<p>服务器、信息摘要、数字签名三者的关系是这样的：<br>
+<img src="https://Tempest-101.github.io/post-images/1678102041434.png" alt="" loading="lazy"><br>
+服务器信息与服务器公钥通过单项加密算法加密后的密文就是信息摘要，信息摘要通过CA的私钥加密后生成数字签名。服务器信息、服务器公钥、数字签名三者的组合就是数字证书。</p>
+<p>CA可以理解为一种公正所，代表着权威、可信。数字签名相当于是身份证，身份证需要官方机构发行才可信，CA就相当于这个官方机构。</p>
+<p><strong>为什么要有信息摘要？</strong> 就像在非对称加密里讲的那样，非对称加密是一种性能不高的加密策略，如果直接对服务器相关信息进行CA私钥加密，效率太低。所以信息摘要就是为了限制待加密信息的长度，提高性能。</p>
+<h3 id="验签">验签</h3>
+<p>客户端通过验证数字证书的合法性来验证报文发送方的身份，这一过程称为验签。</p>
+<p>客户端对数字证书中的服务器信息、服务器公钥进行加密得到信息摘要A，通过CA机构的公钥对数字签名进行解密得到信息摘要B，然后将两份信息摘要进行比对，如果相同则验签通过，否则失败。<br>
+<img src="https://Tempest-101.github.io/post-images/1678103096872.png" alt="" loading="lazy"></p>
+<p>信息摘要由单向加密算法生成，就是为了防止伪造“合法的”数字证书。</p>
+<p>从技术上来讲，任何人都可以使用自己的公钥私钥创建自己的数字证书，这种不由CA加密的证书称为自签名证书，浏览器会提示该证书不可信。如果这时用户手动信任该证书，则会在客户端内置这份证书，后续再收到就能通过验签，这是很危险的。</p>
+<p>客户端默认信任CA机构，建立在这个前提下才能信任经过CA加密的数字证书。</p>
+<h2 id="tlsssl握手">TLS(SSL)握手</h2>
+<h3 id="ssl与tls">SSL与TLS</h3>
+<p>SSL是为HTTP开发的原始安全协议，但是现在被TLS代替了。TLS可以看作是SSL的优化，两者并没有本质上的区别，不必可以的区分开。</p>
+<h3 id="tls握手">TLS握手</h3>
+<p>HTTPS通信前，两端进行身份验证并生成会话密钥的过程就是TSL握手。<br>
+TSL1.3废弃了RSA密钥协商算法，因为RSA算法不具备前向安全性，即如果黑客成功破解了一次密钥，那么以前的报文也会暴露。而ECDHE每次握手的密钥都是随机的，即使被破解，也只是泄露那一次的信息。不过由于TSL1.2对RSA大规模使用，这里还是进行介绍。<br>
+<strong>RSA</strong></p>
+<ol>
+<li>客户端生成随机数CR，将CR、客户端支持的密码套件发送给服务器。</li>
+<li>服务器保存CR，在套件中选择一个，生成一个随机数SR，将SR、选择的密码套件、服务器数字证书发给客户端。</li>
+<li>客户端验签，获取数字证书中的公钥，获取SR，然后生成一个随机数PMS(PRE_MASTER_SECRET)，用公钥加密PMS后发送给服务器。</li>
+<li>服务器接收到PMS密文后，用私钥将其解密。这时，客户端与服务器都拥有CR、SR、PMS三个随机数了，接下来客户端与服务器的行动是大致相同的。</li>
+<li>根据CR、SR、PMS推导计算出MS(MASTER_SCRET)，然后删除PMS。再根据CR、SR、MS推导计算出KB(KEY_BLOCK)，然后基于这个KB继续推导出6个值，包含了client_write-key与server_write_key</li>
+<li>客户端发送信息会用client_write_key，服务器接收后用client_write-key解密，反之用server_write_key。</li>
+</ol>
+<p><strong>ECDH</strong><br>
+ECDH算法利用了一个特性：EC指椭圆曲线，由于ECDH所用计算方法是指数计算的，很麻烦，这里我们先用乘法计算来模拟。ECDH所利用的特性是，对于C=A*G、S=B*G，对于已知G的用户，可以很轻松的根据C与S的值计算出A与B，但对于不知道的用户，单纯根据C，S来推出A，B是很难的。因此可以用A*G*B来作为会话密钥。笔者很菜，没有看明白网上其他人写的步骤，所以只能非常粗略来扯下步骤：</p>
+<ol>
+<li>客户端生成随机数A，发送问候消息，大概就是A*G，还有支持的曲线。</li>
+<li>服务器获取A*G，生成随机数B，计算出密钥A*G*B，然后向客户端发送数字证书、B*G，支持曲线。</li>
+<li>客户端验签，收到B*G，计算出密钥A*G*B。</li>
+</ol>
+<p>可以发现其实客户端并没有和服务器商讨用哪种算法，因为TLS删除了大量&quot;不靠谱&quot;的加密算法，剩下的很少，因此客户端会假设服务器知道要用那种算法。因此TLS1.3中握手只需要1RTT，性能大大提升。</p>
+<p><strong>抵御重放攻击</strong><br>
+重放攻击指攻击者不断重复发送一个有效的请求。HTTPS在加密报文后，会结合序列号seq_num生成一个MAC验证码附在密文后面，客户端和服务器在本地会维护client_send 和 client_recv，随着报文的收发而递增，而抵御重放攻击就是靠client_send 和 client_recv对MAC验证码的校验。</p>
+<p><strong>0RTT会话恢复</strong><br>
+说实话小菜菜没能完全理解这玩意，所以为了不误导大家，这里直接CTRL CV一段别人的</p>
+<p>TLS 1.3 还支持一个更快的 TLS 握手版本，根本不需要任何往返，或客户端和服务器之间的来回通信。如果客户端和服务器之前已经相互连接（例如，如果用户之前访问过该网站），它们可以各自从第一个会话中获取另一个共享密钥，称为“恢复主密钥”。在第一个会话期间，服务器还会向客户端发送称为会话票证的东西。客户端可以使用此共享密钥，在下一次会话的第一条消息中将加密数据连同该会话票证一起发送到服务器。然后 TLS 会在客户端和服务器之间恢复。<br>
+此段摘自：<a href="https://www.cloudflare.com/zh-cn/learning/ssl/what-happens-in-a-tls-handshake/">https://www.cloudflare.com/zh-cn/learning/ssl/what-happens-in-a-tls-handshake/</a><br>
+补充：TLS1.3 0RTT会话恢复不可抵御重放攻击。因为恢复过程中会出现新的key_block，所以MAC值不会与以前相同。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://Tempest-101.github.io/tag/Ali0OX3kl/" class="tag">
+                    计算机网络
+                  </a>
+                
+              </div>
+            
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

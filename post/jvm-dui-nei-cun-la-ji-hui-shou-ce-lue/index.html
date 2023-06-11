@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>JVM内存区域划分 | 守财奴囤小宇</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://Tempest-101.github.io/favicon.ico?v=1686494328830">
+<link rel="stylesheet" href="https://Tempest-101.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="为什么JVM需要内存区域划分？
+众所周知Java程序是有很多不同类型的数据的：类、对象实例、局部变量等。不同的内存空间用来放不同的数据，然后配合我们写的代码流程，才能让我们的系统运行起来。
+就好比收纳物品，衣物放在一个地方，电器放在一个地方..." />
+    <meta name="keywords" content="JVM" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://Tempest-101.github.io">
+        <img src="https://Tempest-101.github.io/images/avatar.png?v=1686494328830" class="site-logo">
+        <h1 class="site-title">守财奴囤小宇</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Time
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://Tempest-101.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">JVM内存区域划分</h2>
+            <div class="post-date">2023-03-15</div>
+            
+            <div class="post-content" v-pre>
+              <h3 id="为什么jvm需要内存区域划分">为什么JVM需要内存区域划分？</h3>
+<p>众所周知Java程序是有很多不同类型的数据的：类、对象实例、局部变量等。不同的内存空间用来放不同的数据，然后配合我们写的代码流程，才能让我们的系统运行起来。</p>
+<p>就好比收纳物品，衣物放在一个地方，电器放在一个地方，药品放在一个地方，这样需要获取一个物品时才能知道应该去哪寻找，而不是堆在一起一个个找过去。</p>
+<p>总结：JVM中必须划分出来不同的内存区域，是为了我们写好的代码在运行过程中根据需要来使用。</p>
+<p>那么JVM中都有哪些内存区域呢。</p>
+<h3 id="方法区">方法区</h3>
+<p>方法区主要用来存放从“.class”文件中加载的类，还有一些类似常量池的东西。</p>
+<p>JDK1.6及以前，常量池在方法区，这时的方法区也叫做永久代。</p>
+<p>JDK1.7的时候，方法区合并到了堆内存中，这时的常量池也可以说是在堆内存中。</p>
+<p>JDK1.8及以后，方法区又从堆内存中剥离出来了，但实现方式与之前的永久代不同，这时的方法区被叫做元空间，常量池就存储在元空间。而字符串常量池还在堆中。</p>
+<h3 id="程序计数器">程序计数器</h3>
+<p>.java文件会被编译为.class文件，.class文件里存储的是编译后的字节码文件，实际上就是一条条指令，JVM用自己的字节码执行引擎对.class文件内的指令一条条的执行。程序计数器的作用就是记录当前执行的字节码指令的位置。多线程编程下，每个线程都有一个对应的程序计数器。</p>
+<h3 id="栈">栈</h3>
+<p>JVM栈存储的是方法的局部变量。每调用一个方法，就会在JVM栈中压入一个对应的栈帧，用于存储该方法内部的局部变量与该方法的相关信息。该方法执行完毕后就出栈。</p>
+<p>每个线程都有自己的JVM栈。</p>
+<h3 id="堆">堆</h3>
+<p>堆中存放的是Java对象实例。方法的局部变量如果有对象的话，在栈帧中存放的不是对象本身，而是它的一个引用类型。这个引用类型指向堆中存放的那个对象实例。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://Tempest-101.github.io/tag/SL7VZwKQR/" class="tag">
+                    JVM
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://Tempest-101.github.io/post/diao-du-suan-fa/">
+                  <h3 class="post-title">
+                    调度算法
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

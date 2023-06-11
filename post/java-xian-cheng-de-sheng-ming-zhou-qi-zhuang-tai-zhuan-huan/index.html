@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>Java线程的生命周期(状态转换) | 守财奴囤小宇</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://Tempest-101.github.io/favicon.ico?v=1686494328830">
+<link rel="stylesheet" href="https://Tempest-101.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="学习Java线程生命周期，其实就是掌握Java线程各个状态间的转换。在学习Java线程生命周期前，先来看一下通用线程生命周期。
+通用的线程生命周期
+通用的线程生命周期一般包含五个状态：初始状态、可运行状态、运行状态、休眠状态、终止状态。
+
+..." />
+    <meta name="keywords" content="并发编程" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://Tempest-101.github.io">
+        <img src="https://Tempest-101.github.io/images/avatar.png?v=1686494328830" class="site-logo">
+        <h1 class="site-title">守财奴囤小宇</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Time
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://Tempest-101.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Java线程的生命周期(状态转换)</h2>
+            <div class="post-date">2023-03-31</div>
+            
+            <div class="post-content" v-pre>
+              <p>学习Java线程生命周期，其实就是掌握Java线程各个状态间的转换。在学习Java线程生命周期前，先来看一下通用线程生命周期。</p>
+<h3 id="通用的线程生命周期">通用的线程生命周期</h3>
+<p>通用的线程生命周期一般包含五个状态：初始状态、可运行状态、运行状态、休眠状态、终止状态。<br>
+<img src="https://Tempest-101.github.io/post-images/1680341777469.png" alt="" loading="lazy"><br>
+<strong>初始状态</strong>：指线程在语言层面被创建了，但操作系统层面上并未创建。也就是说，初始状态的线程不允许分配CPU资源。</p>
+<p><strong>可运行状态</strong>：操作系统层面上线程成功创建即为可运行状态线程，表现为拥有获取CPU资源的资格。</p>
+<p><strong>运行状态</strong>：一个线程获取了操作系统分配的CPU资源后就会转为运行状态。</p>
+<p><strong>休眠状态</strong>：当运行状态的线程调用了一个阻塞的API(例如以阻塞方式读文件)或等待某个事件时，该线程会释放CPU使用权。这时该线程就处于休眠状态，当等待事件发生后线程就会再转为可运行状态。</p>
+<p><strong>终止状态</strong>：线程执行完或遇到异常就会转换为终止状态，终止状态标志着线程的死亡。</p>
+<p>在Java语言中，可运行状态与运行状态是合并的，因为这两个状态是面向操作系统的，JVM并不关心线程调度，而是把线程调度交给操作系统处理。除此之外，Java语言还细化了休眠状态应对更多情况。</p>
+<h3 id="java线程生命周期">Java线程生命周期</h3>
+<p>Java线程生命周期大致可以简化为下图：<br>
+<img src="https://Tempest-101.github.io/post-images/1680342875176.png" alt="" loading="lazy"><br>
+Java线程生命周期分为四个状态，其中休眠状态又细分为三个状态，因此可以认为是六个状态：</p>
+<p><strong>NEW</strong>：Java中使用线程需要先创建线程对象(继承Thread或实现Runnable，并创建实例)，这个线程对象刚被创建好时就处于NEW状态。</p>
+<p><strong>RUNNABLE</strong>：NEW状态的线程是不会被操作系统调度的，也就是NEW状态线程并不会执行。调用线程对象的start()方法JVM就会将该线程交给操作系统调度，这时线程就转化到了RUNNABLE状态。</p>
+<p><strong>BLOCKED</strong>：线程等待synchronized隐式锁时会从RUNNABLE态转化为BLOCKED态，在synchronized隐式锁被该线程获取后，该线程又会从BLOCKED态转化为RUNNABLE态。值得注意的是，调用阻塞API并不会改变Java线程生命周期状态，因为阻塞API造成的阻塞是面向操作系统的，JVM并不关心系统调用的相关状态，因此在JVM看来，因为调用阻塞API造成休眠的线程还是RUNNABLE状态。</p>
+<p><strong>WAITING</strong>：有三种情况会使RUNNABLE态线程转化为WAITING线程：<br>
+1.获取了synchronized隐式锁的线程调用了无参的Object.wait()方法。<br>
+2.线程中调用了无参的join()方法让其他线程“插队”，在这个插队线程执行完之前本线程处于WAITING状态。<br>
+3.调用LockSupport.park()</p>
+<p><strong>TIMED_WAITING</strong>：有五种情况会使RUNNABLE线程转化为TIMED_WAITING线程：<br>
+1.调用带超时参数的 Thread.sleep(long millis) 方法。<br>
+2.获得 synchronized 隐式锁的线程，调用带超时参数的 Object.wait(long timeout) 方法。<br>
+3.调用带超时参数的 Thread.join(long millis) 方法。<br>
+4.调用带超时参数的 LockSupport.parkNanos(Object blocker, long deadline) 方法。<br>
+5.调用带超时参数的 LockSupport.parkUntil(long deadline) 方法。</p>
+<p><strong>TERMINATED</strong>：在线程运行完、遇到异常、调用interrupt()或stop()方法时线程会转换为TERMINATED态，即终止态。<br>
+不过stop()方法已弃用，因为stop方法太过暴力，它采用的方法是直接杀死线程；设想一个线程持有ReentrantLock锁时，若使用stop方法直接将其杀死，那么该线程就无法使用unlock()方法释放锁，那么还在等待队列中的其他线程就再没机会获得该锁了。<br>
+interrupt方法则是通过通知线程来引导它终止，也就是说线程有机会执行后续的一些操作。interrupt方法会引导线程触发异常或者让它主动检测自己来终止。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://Tempest-101.github.io/tag/KBnv1yOO4/" class="tag">
+                    并发编程
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://Tempest-101.github.io/post/jvm-lei-de-jia-zai/">
+                  <h3 class="post-title">
+                    JVM Class文件加载过程
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

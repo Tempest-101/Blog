@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>事务及四特性 | 守财奴囤小宇</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://Tempest-101.github.io/favicon.ico?v=1686494328830">
+<link rel="stylesheet" href="https://Tempest-101.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="事务是什么？
+一条sql语句就是一次行动，一些sql语句在逻辑上关联，将这些sql语句聚合成一件事，即将多次动作聚合成一个行动，就是事务。事务中的sql语句需要都成功执行，如果有任何错误的话就全部撤销。
+事务满足四个特性：原子性、隔离性、一..." />
+    <meta name="keywords" content="MySQL" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://Tempest-101.github.io">
+        <img src="https://Tempest-101.github.io/images/avatar.png?v=1686494328830" class="site-logo">
+        <h1 class="site-title">守财奴囤小宇</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Time
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://Tempest-101.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">事务及四特性</h2>
+            <div class="post-date">2023-04-23</div>
+            
+            <div class="post-content" v-pre>
+              <h4 id="事务是什么">事务是什么？</h4>
+<p>一条sql语句就是一次行动，一些sql语句在逻辑上关联，将这些sql语句聚合成一件事，即将多次动作聚合成一个行动，就是事务。事务中的sql语句需要都成功执行，如果有任何错误的话就全部撤销。</p>
+<p>事务满足四个特性：原子性、隔离性、一致性、持久性。一致性是目的，其他三个特性是手段。</p>
+<p>MySQL有四种隔离级别：读未提交、读提交、可重复读、串行化。</p>
+<h4 id="原子性如何实现">原子性如何实现？</h4>
+<p>原子性指一个事务中的sql语句如同一个原子一般，要么全部成功，要么全部失败，不会有不同的状态。</p>
+<p>原子性实现的关键在于实现将sql操作撤回这一功能。MySQL采用InnoDB的undo log实现。</p>
+<p>undo log是一个逻辑日志，它记录着数据更新前的记录，RowID，事务ID，回滚指针(可以理解为回退sql操作需要的信息)，当事务需要回滚时，MySQL就依靠undo log的信息进行回退。</p>
+<h4 id="持久性如何实现">持久性如何实现？</h4>
+<p>为了减少IO次数，提高性能，InnoDB提供了一个在内存的Buffer Pool，对数据的操作会先存在Buffer Pool，在某个时刻再将Buffer Pool中的数据存入磁盘。但单单这样的话，如果在Buffer Pool还未刷脏时数据库就宕机了，那么重启后Buffer Pool中的数据就丢失了，未能落到磁盘。而持久性就是指一个事务提交后，最终这个事务对数据的修改一定能落到磁盘。MySQL的策略是，保证在事务成功后，这个事务对数据库的修改在磁盘中都有一个总的记录，这样哪怕内存中的数据丢失了，仍可以通过磁盘中这一记录落盘。这个记录由redo log实现。</p>
+<p>redo log是一种物理日志，记录的是数据的改变。在sql语句对数据的修改记录到Buffer Pool时，redo log也会记录这次改变。如同Buffer log产生的原因，redo log也有对应的redo log buffer，redo log buffer又分为若干个redo log block，每个block大小为512字节，这是一个扇区的大小，扇区是最小写入单位。在事务提交时，需要将redo log buffer刷入磁盘。只有redo log完成持久化了，这个事务才算成功。而这时就算数据库宕机了，但是redo log已经记录在磁盘了，最终修改的数据依旧会落到磁盘。这也就是先写日志后写数据。</p>
+<p>PS：</p>
+<p><strong>为什么要redo log，直接刷脏不行吗？</strong></p>
+<p>刷脏需要定位各个数据行的位置，磁头要多次移动，而redo log是顺序IO，速度会快很多。</p>
+<p>刷脏是以数据页为单位的，会涉及很多无用数据的写入，redo log则只包含被修改的数据部分，相比之下小很多。</p>
+<p>也有其他方法可以实现持久化，但是代价比redo log大。</p>
+<p>有一个参数可以控制每次事务提交是否要求redo log buffer持久化，如果设置为否，那么MySQL不再具有持久性特性。</p>
+<p>redo log靠两阶段提交保证自身完整性与和bin log的一致性。</p>
+<p>恢复过程</p>
+<ul>
+<li>启动InnoDB时，找到最近一次Checkpoint的位置，利用Checkpoint LSN去找大于该LSN的redo log进行日志恢复。</li>
+<li>如果中间恢复失败了也没影响，再次恢复的时候还是从上次保存成功的Checkpoint的位置继续恢复。</li>
+</ul>
+<p><strong>什么是LSN?</strong></p>
+<p>LSN也就是log sequence number，也日志的序列号，是一个单调递增的64位无符号整数。redo log和数据页都保存着LSN，可以用作数据恢复的依据。LSN更大的表示所引用的日志记录所描述的变化发生在更后面。</p>
+<p><strong>什么是Checkpoint？</strong></p>
+<p>Checkpoint表示一个保存点，在这个点之前的数据页的修改（log LSN&lt;Checkpoint LSN）都已经写入磁盘文件了。InnoDB每次刷盘之后都会记录Checkpoint，把最新的redo log LSN 记录到Checkpoint LSN 里，方便恢复数据的时候作为起始点的判断。</p>
+<h4 id="隔离性如何实现">隔离性如何实现？</h4>
+<p>事务有四种隔离级别</p>
+<p>读未提交：读到表中最新的值，写操作加锁，无法应对脏读、不可重复读、幻读</p>
+<p>读提交：只能读到commit后的值，通过MVCC、加锁实现，解决了脏读</p>
+<p>可重复读：只能读事务开启时那一瞬间的数据，通过MVCC、加锁实现，解决了脏读与不可重复读，幻读需要显示加锁才能解决。</p>
+<p>串行化：将事务变成顺序执行，相当于转变为单线程，通过加锁实现，解决了三种问题。</p>
+<h5 id="读未提交">读未提交</h5>
+<p>读操作不加锁，写操作加互斥锁防止脏写。(不加锁的语句不会被锁阻塞！)</p>
+<p>脏写例子：有一条数据为0，事务A将其改为1，事务B改为2，而事务A回滚，导致最终这个值还是0，对于事务B却认为该数据应该是2。通过加互斥锁，事务B必须等事务A释放锁后事务B才能对表进行更新。</p>
+<h5 id="读提交">读提交</h5>
+<p>读操作是快照读，依靠MVCC，会在可重复读讲解。写依旧要互斥锁。</p>
+<h5 id="可重复读">可重复读</h5>
+<p>与读提交一样，MVCC解决不可重复读，显示加锁+next-key解决幻读。重点要讲一下MVCC。</p>
+<h5 id="mvcc">MVCC</h5>
+<p>MVCC让数据库中的数据有多个版本，这些版本通过undo log实现联结。每个事务都有一个transcation_id，在这个事务内修改更新的数据行都会生成一个transcation_id与这个事务一样的数据行版本。对于可重复读级别，事务开启时会生成一个由当前活动的事务的事务id组成的数组，这个数组的最小值称为低水位，最大值+1称为高水位，这个数组姑且称为水位图。在读数据时会将该数据的版本号和这个数组相比，如果版本号小于等于低水位，则认为可读；如果大于等于高水位，则认为不可读，然后通过undo log查询上一个版本继续比较；如果版本号在水位之间，则看数组中有没有这个版本号，有的话认为不可读且继续比较上一个版本，没有的话就认为可读。</p>
+<p>读提交读的区别是，可重复读的水位图在事务开启时就确定下，在事务结束前不会改变。而读提交则是事务中每执行一条sql语句前都会更新一次水位图。</p>
+<h5 id="next-key">next-key</h5>
+<p>next-key由行锁+间隙锁组合而成，<em><strong>TODO</strong></em><em><strong>TODO</strong></em><em><strong>TODO</strong></em><em><strong>TODO</strong></em><em><strong>TODO</strong></em><em><strong>TODO</strong></em><em><strong>TODO</strong></em></p>
+<h5 id="串行化">串行化</h5>
+<p>读操作加共享锁，写操作加互斥锁，性能较差，很少使用。</p>
+<h4 id="两阶段提交">两阶段提交</h4>
+<p>两阶段提交指的是redo log持久化分为两阶段实现，目的是保证redo log与bin log的逻辑一致性。</p>
+<p>为何有了bin log还要redo log？bin log是追加写，文件无限大小；redo log是循环写，只记录脏页数据相关。bin log是全量备份，但是没有一个标志让InnoDB判断哪些数据已经刷盘，哪些还未刷盘，所以宕机后无法通过bin log定位需要从哪个地方开始恢复。所以bin log是没有crash-safe能力的。</p>
+<p>两阶段提交：在对数据进行操作后，首先写一次redo log，并标记为prepared，然后写bin log，最后再将redo log标记为committed，至此两阶段提交完毕。</p>
+<p>两阶段提交如何实现崩溃恢复呢？</p>
+<p>redo log与bin log在记录时都会记录一个XID，是事务ID。</p>
+<p>若在第一次redo log提交前宕机，redo log与bin log都未改变，还是逻辑一致的，不需要恢复。</p>
+<p>若是在第一次redo log提交至bin log提交之间宕机的话，redo log未标记为committed，会用redo log的XID去bin log中查找，而bin log此时并未写入，自然是无法查找到的，那么执行回滚操作。</p>
+<p>若是在bin log提交至redo log第二次提交之间宕机，依旧是用redo log的XID去bin log中查找，此时能查找到，数据是逻辑一致的，那么完成最后一步将redo log状态改为committed。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://Tempest-101.github.io/tag/ZnLriFl9Q/" class="tag">
+                    MySQL
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://Tempest-101.github.io/post/mysql-zi-zeng-zhu-jian-yuan-li/">
+                  <h3 class="post-title">
+                    MySQL自增主键原理
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

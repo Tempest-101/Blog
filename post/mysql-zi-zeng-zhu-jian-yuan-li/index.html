@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>MySQL自增主键原理 | 守财奴囤小宇</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://Tempest-101.github.io/favicon.ico?v=1686494328830">
+<link rel="stylesheet" href="https://Tempest-101.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="自增主键会出现不连续的问题，在更早的版本前还有不单调的问题，要了解这些问题产生的原因需要先了解下自增主键的原理。
+在表中会有一个AUTO_INCREMENT，它的值是下一条数据的自增值，该数据在MyISAM存储引擎保存在数据文件中，在Inn..." />
+    <meta name="keywords" content="MySQL" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://Tempest-101.github.io">
+        <img src="https://Tempest-101.github.io/images/avatar.png?v=1686494328830" class="site-logo">
+        <h1 class="site-title">守财奴囤小宇</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Time
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://Tempest-101.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">MySQL自增主键原理</h2>
+            <div class="post-date">2023-04-23</div>
+            
+            <div class="post-content" v-pre>
+              <p>自增主键会出现不连续的问题，在更早的版本前还有不单调的问题，要了解这些问题产生的原因需要先了解下自增主键的原理。</p>
+<p>在表中会有一个AUTO_INCREMENT，它的值是下一条数据的自增值，该数据在MyISAM存储引擎保存在数据文件中，在InnoDB存储引擎保存在内存中。针对InnoDB来了解。</p>
+<p>在MySQL8.0版本前，AUTO_INCREMENT没有持久化功能，因此在MySQL重启后，AUTO_INCREMENT是没有重启前的值的，因此它会查询当前表中最大的子增值max，再将max+1设为AUTO_INCREMENT的值。如果当前表最大值是10，其次是9，那么AUTO_INCREMENT就是11，而此时把10这条数据删除，AUTO_INCREMENT仍旧是11；但重启后，MySQL查询到max为9，那么AUTO_INCREMENT就会变成10。将这就是导致不单调的原因。</p>
+<p>在MySQL8.0级以后，自增值的变更会保存在redo log中，重启时会利用redo log恢复之前的值。</p>
+<p>下面我们来了解下自增值修改策略。如果一个字段id被定义为AUTO_INCREMENT，在插入一行数据时：</p>
+<ul>
+<li>如果插入数据行id为0、null或未指定，就将当前AUTO_INCREMENT的值填入该字段。</li>
+<li>如果插入数据行指定了id，则直接用指定值。</li>
+</ul>
+<p>根据插入值id与AUTO_INCREMENT的关系，AUTO_INCREMENT的修改策略也会不同。假设最终插入id的值为X，当前AUTO_INCREMENT为Y：</p>
+<ul>
+<li>X&gt;=Y，AUTO_INCREMENT重新计算</li>
+<li>X&lt;Y，AUTO_INCREMENT不变</li>
+</ul>
+<p>AUTO_INCREMENT计算算法：从auto_increment_offset开始以auto_increment_increment为步长逐步叠加直到计算出第一个大于X的值，更新该值为AUTO_INCREMENT。auto_increment_offset与auto_increment_increment为系统参数，默认为1。</p>
+<p>现在可以来了解自增主键不连续的问题了。该现象可能由<strong>唯一键冲突、回滚、批量插入</strong>导致。</p>
+<h5 id="唯一键冲突">唯一键冲突</h5>
+<p>假设表table结构为id、a、b。id为自增主键，a为唯一索引，b为普通数据。表中已有一条数据为：(1，1，1)，那么此时AUTO_INCREMENT应为2，这时执行</p>
+<pre><code class="language-mysql">insert into table value (null, 1 , 2)
+</code></pre>
+<p>底层流程为：</p>
+<ol>
+<li>执行器调用引擎接口写入(null,1,2)</li>
+<li>存储引擎发现传入id为null，获取当前表AUTO_INCREMENT为2，将传入值修改为(2,1,2)</li>
+<li>将AUTO_INCREMENT改为3</li>
+<li>继续执行写入操作，发现唯一索引a冲突，返回Duplicate key error错误</li>
+</ol>
+<p>因为唯一主键冲突，该数据并没有写入成功，但是AUTO_INCREMENT却已经更改为3，这就造成了自增主键不连续。</p>
+<h5 id="回滚">回滚</h5>
+<pre><code class="language-mysql">insert into table values(null,1,1);
+begin;
+insert into table values(null,2,2);
+rollback;
+insert into table values(null,2,2);
+//插入的行是(3,2,2)
+</code></pre>
+<p>造成该问题的原因是事务回滚后AUTO_INCREMENT并没有回退。这是为了性能考虑的。我们来看看允许回退的情况：</p>
+<p>假设有两个事务并行</p>
+<ol>
+<li>假设事务 A 申请到了 id=2， 事务 B 申请到 id=3，那么这时候表 t 的自增值是 4，之后继续执行。</li>
+<li>事务 B 正确提交了，但事务 A 出现了唯一键冲突。</li>
+<li>如果允许事务 A 把自增 id 回退，也就是把表 t 的当前自增值改回 2，那么就会出现这样的情况：表里面已经有 id=3 的行，而当前的自增 id 值是 2。</li>
+<li>接下来，继续执行的其他事务就会申请到 id=2，然后再申请到 id=3。这时，就会出现插入语句报错“主键冲突”。</li>
+</ol>
+<p>而为了解决这个主键冲突，有两种方法：</p>
+<ol>
+<li>每次申请 id 之前，先判断表里面是否已经存在这个 id。如果存在，就跳过这个 id。但是，这个方法的成本很高。因为，本来申请 id 是一个很快的操作，现在还要再去主键索引树上判断 id 是否存在。</li>
+<li>把自增 id 的锁范围扩大，必须等到一个事务执行完成并提交，下一个事务才能再申请自增 id。这个方法的问题，就是锁的粒度太大，系统并发能力大大下降。</li>
+</ol>
+<p>这两个方法都会较大的影响性能，权衡之下还是选择了用空间换时间，允许不连续来换取性能。</p>
+<h5 id="批量插入">批量插入</h5>
+<p>这里的批量插入特指<strong>包含的语句类型是 insert … select、replace … select 和 load data 语句</strong>。因为如果是用values这种的话，在申请自增主键时是可以精确计算出需要申请的个数的。而特指的那几种是未知的，在申请时会先分配1个，若不够则再分配2个、4个、8个。下面有个例子：</p>
+<pre><code class="language-mysql">insert into t values(null, 1,1);
+insert into t values(null, 2,2);
+insert into t values(null, 3,3);
+insert into t values(null, 4,4);
+create table t2 like t;
+insert into t2(c,d) select c,d from t;
+insert into t2 values(null, 5,5);
+</code></pre>
+<p>insert…select，实际上往表 t2 中插入了 4 行数据。但是，这四行数据是分三次申请的自增 id，第一次申请到了 id=1，第二次被分配了 id=2 和 id=3， 第三次被分配到 id=4 到 id=7。</p>
+<p>由于这条语句实际只用上了 4 个 id，所以 id=5 到 id=7 就被浪费掉了。之后，再执行 insert into t2 values(null, 5,5)，实际上插入的数据就是（8,5,5)。</p>
+<h5 id="自增锁的优化">自增锁的优化</h5>
+<p>可以看到，自增 id 锁并不是一个事务锁，而是每次申请完就马上释放，以便允许别的事务再申请。其实，在 MySQL 5.1 版本之前，并不是这样的。</p>
+<p>接下来，我会先给你介绍下自增锁设计的历史，这样有助于你分析接下来的一个问题。</p>
+<p>在 MySQL 5.0 版本的时候，自增锁的范围是语句级别。也就是说，如果一个语句申请了一个表自增锁，这个锁会等语句执行结束以后才释放。显然，这样设计会影响并发度。</p>
+<p>MySQL 5.1.22 版本引入了一个新策略，新增参数 innodb_autoinc_lock_mode，默认值是 1。</p>
+<ol>
+<li>这个参数的值被设置为 0 时，表示采用之前 MySQL 5.0 版本的策略，即语句执行结束后才释放锁；</li>
+<li>这个参数的值被设置为 1 时：</li>
+</ol>
+<ul>
+<li>普通 insert 语句，自增锁在申请之后就马上释放；</li>
+<li>类似 insert … select 这样的批量插入数据的语句，自增锁还是要等语句结束后才被释放；</li>
+</ul>
+<ol start="3">
+<li>这个参数的值被设置为 2 时，所有的申请自增主键的动作都是申请后就释放锁。</li>
+</ol>
+<p>为什么批量插入语句还需要加语句锁呢？因为如果设置binlog_format=statement的话，那么在一个事务A执行批量插入的过程中，另一个事务B向同一个表也插入一行数据，那么批量插入的那些数据的自增主键就不连续了。而此时bin log记录的要么先A再B，要么先B再A，无论哪种，用bin log回档时，都会造成数据不一致。有两种解决方案：</p>
+<ol>
+<li>一种思路是，让原库的批量插入数据语句，固定生成连续的 id 值。所以，自增锁直到语句执行结束才释放，就是为了达到这个目的。</li>
+<li>另一种思路是，在 binlog 里面把插入数据的操作都如实记录进来，到备库执行的时候，不再依赖于自增主键去生成。这种情况，其实就是 innodb_autoinc_lock_mode 设置为 2，同时 binlog_format 设置为 row(该参数下，bin log记录的是真正的数据改变顺序)。</li>
+</ol>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://Tempest-101.github.io/tag/ZnLriFl9Q/" class="tag">
+                    MySQL
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://Tempest-101.github.io/post/suo-yin-shi-shi-me/">
+                  <h3 class="post-title">
+                    索引是什么？
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>
